@@ -4,6 +4,22 @@ import sys
 import requests
 
 
+class Graph:
+    gene_list = []
+    edge_list = []
+
+    def __init__(self, g_list=None, e_list=None):
+        if g_list:
+            self.gene_list = g_list
+        else:
+            self.gene_list = []
+
+        if e_list:
+            self.edge_list = e_list
+        else:
+            self.edge_list = []
+
+
 def get_graph(source):
     # PC2 REST API
     pc2 = 'http://www.pathwaycommons.org/pc2/graph'
@@ -14,7 +30,7 @@ def get_graph(source):
     gene_list = []
     edge_list = []
 
-    if response.status_code == 200:
+    if response.status_code == requests.codes.ok:
         data = response.text
 
         (edg_list, vtx_list) = data.split('\n\n')
@@ -54,6 +70,7 @@ def main(argv):
 
             else:
                 print('\'%s\' was not found.' % source)
+
 
 if __name__ == '__main__':
     main(sys.argv[1:])
