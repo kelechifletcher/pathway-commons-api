@@ -7,15 +7,10 @@ from optparse import OptionParser
 
 
 class Graph:
-    name = ''
-    description = ''
     gene_list = []
     edge_list = []
 
-    def __init__(self, name='', description='', g_list=None, e_list=None):
-        self.name = name
-        self.description = description
-
+    def __init__(self, g_list=None, e_list=None):
         if g_list:
             self.gene_list = g_list
         else:
@@ -28,18 +23,6 @@ class Graph:
 
     def to_string(self):
         string = ''
-
-        #essentials
-        score_type = '! Binary'
-        species = '@ Homo Sapiens'
-        gene_id_type = '% Gene Symbol'
-        abbr = ': '
-        name = '= '
-        desc = '+ '
-
-        string += '%s\n%s\n%s\n%s\n%s\n%s\n\n' % (score_type, species,
-                                                gene_id_type, abbr + self.name,
-                                                name + self.name, desc + self.description)
 
         for gene in self.gene_list:
             string += '%s\n' % gene
@@ -85,10 +68,14 @@ def get_graph(source):
             if edge[0] in gene_list and edge[2] in gene_list:
                 edge_list.append(edge[:3])
 
-    return Graph(name='%s Gene Interaction Network' % source,
-                 description='%s Gene Interaction Network Retrieved From Pathway Commons',
-                 g_list=gene_list,
-                 e_list=edge_list)
+    return Graph(g_list=gene_list, e_list=edge_list)
+
+
+def batch_format(score_type, species, gene_id_type, gs_abbr, gs_name, gs_desc):
+    # template
+    template = '! %s\n@ %s\n%% %s\n: %s\n= %s\n+ %s\n' % (score_type, species, gene_id_type, gs_abbr, gs_name, gs_desc)
+
+    return template
 
 
 def main(argv):
@@ -120,7 +107,8 @@ def main(argv):
 
             if opts.file:
                 out_file = open(opts.file, 'w+')
-                out_file.write(graph.to_string())
+                out_file.write(batch_format('Binary', 'Homo Sapien', 'Gene Symbol', 'TEST', 'TEST', 'TEST') +
+                               graph.to_string())
                 out_file.close()
 
                 print(out_file.name)
